@@ -1,7 +1,87 @@
 import os
-from Environment import EDS1_ENV
+import sys
+
+class EDS1_SIM:
+    def __str__(self):
+        return f"SIM\n\tNAME: {self.name} \n\tDIR: {self.sim_directory}"
 
 
+    def set_sim_directory(self, sim_directory):
+        self.sim_directory = sim_directory
+        
+    def get_sim_directory(self):
+        return self.sim_directory
+
+    def set_name(self, name):
+        self.name = name
+        
+    def get_name(self):
+        return self.name
+        
+    def set_makefile_path(self, filename):
+        files = os.listdir(self.sim_directory)
+        if filename not in files:
+            self.makefile_path = os.path.join(self.sim_directory, filename)
+            with open(self.makefile_path, 'w') as file:
+                pass
+        self.makefile_path = os.path.join(self.sim_directory, filename)
+        
+    def set_makefile_sources_path(self, filename):
+        files = os.listdir(self.sim_directory)
+        if filename not in files:
+            self.makefile_sources_path = os.path.join(self.sim_directory, filename)
+            with open(self.makefile_sources_path, 'w') as file:
+                pass
+        self.makefile_path = os.path.join(self.sim_directory, filename)
+        
+    def get_makefile_path(self):
+        return self.makefile_path
+    
+    def get_makefile_source_path(self):
+        return self.makefile_sources_path
+    
+    def process(self):
+        self.set_makefile_path("makefile")
+        self.set_makefile_sources_path("makefile.sources")
+        
+
+class EDS1_PNR:
+
+    def __str__(self):
+        return f"PNR\n\tPNR-NAME: {self.name} \n\tPNR-DIR: {self.pnr_directory} \n\tSIM-NAME: {self.SIM.name} \n\tSIM-DIR: {self.SIM.sim_directory}"
+
+    def set_pnr_directory(self, pnr_directory):
+        self.pnr_directory = pnr_directory
+        
+    def get_pnr_director(self):
+        return self.pnr_directory
+
+    def set_name(self, name):
+        self.name = name
+        
+    def get_name(self):
+        return self.name
+
+    def set_sim(self, sim):
+        self.SIM = sim
+        
+    def get_sim(self):
+        return self.SIM
+
+class EDS1_ENV:
+    def add_sim(self, sim):
+        self.sim = sim
+
+    def get_sim(self):
+        return self.sim
+    
+    def add_pnr(self, pnr):
+        self.pnr = pnr
+
+    def get_pnr(self):
+        return self.pnr
+    
+        
 class INIT_ENV:
 
     def print_sim_dirs(self, dirs):
@@ -95,7 +175,15 @@ class INIT_ENV:
         env.add_pnr(self.get_pnr_objects(directory_path))
         return env
     
+  
+if __name__ == "__main__":
+    env_input = INIT_ENV()
 
-env_input = INIT_ENV()
+    directory_path = sys.argv[1]
 
-env = env_input.get_env("/home/maximilian/Git/eds1")
+    env = env_input.get_env(directory_path)
+
+    for pnr in env.get_pnr():
+        pnr.get_sim().process()
+
+
